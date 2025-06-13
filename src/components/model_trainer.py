@@ -18,8 +18,7 @@ from xgboost import XGBRegressor
 from src.exception import CustomException
 from src.logger import logging
 
-from src.utils import save_object
-from src.utils import evaluate_models
+from src.utils import save_object, evaluate_models
 
 
 @dataclass
@@ -57,7 +56,7 @@ class ModelTrainer:
                                              y_test=y_test,
                                              models=models)
             
-            best_model_score=max(sorted(model_report.keys()))
+            best_model_score=max(sorted(model_report.values()))
             
             best_model_name=list(model_report.keys())[
                 list(model_report.values()).index(best_model_score)
@@ -69,7 +68,6 @@ class ModelTrainer:
             
             logging.info("Best found model on training and testing dataset.")
             
-            
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=best_model
@@ -77,8 +75,8 @@ class ModelTrainer:
             
             predicted=best_model.predict(X_test)    
             
-            r2_score=r2_score(y_test, predicted)
-            return r2_score
+            r2=r2_score(y_test, predicted)
+            return r2
         
         except Exception as e:
             raise CustomException(e, sys)
